@@ -22,13 +22,17 @@ func NewOpenVPNConfig(lines []string) (OpenVPNConfig, error) {
 	return o, err
 }
 
-func (o OpenVPNConfig) process() error {
+func (o *OpenVPNConfig) process() error {
 	tags := []string{"ca", "cert", "key"}
 	linesWithTags := make(map[string][]string)
 	tagLines := make([]string, 0)
 	tagStarts := false
 	isTagStartLine := false
 	for _, line := range o.lines {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
 		for _, tag := range tags {
 			startTag := fmt.Sprintf("<%s>", tag)
 			endTag := fmt.Sprintf("</%s>", tag)
@@ -50,7 +54,7 @@ func (o OpenVPNConfig) process() error {
 	}
 	for _, tag := range tags {
 		if lines, ok := linesWithTags[tag]; ok {
-			content := strings.Join(lines, "")
+			content := strings.Join(lines, "\n")
 			switch tag {
 			case "ca":
 				o.CA = content
@@ -63,7 +67,6 @@ func (o OpenVPNConfig) process() error {
 			return fmt.Errorf("Could not get %s context", tag)
 		}
 	}
-	fmt.Printf("CA ---------------- \n  %s %s %s", o.CA, o.Cert, o.Key)
 	return nil
 }
 

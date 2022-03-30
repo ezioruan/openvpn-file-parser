@@ -3,7 +3,9 @@ package parser
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -64,6 +66,34 @@ func (o *OpenVPNConfig) process() error {
 		} else {
 			return fmt.Errorf("Could not get %s context", tag)
 		}
+	}
+	return nil
+}
+
+func (o *OpenVPNConfig) SplitFiles(outputDir string) error {
+	path, err := filepath.Abs(outputDir)
+	if err != nil {
+		return err
+	}
+	err = os.MkdirAll(path, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	CAPath := filepath.Join(outputDir, "ca.crt")
+	clientKeyPath := filepath.Join(outputDir, "client.key")
+	clientCertPath := filepath.Join(outputDir, "client.crt")
+
+	err = ioutil.WriteFile(CAPath, []byte(o.CA), 0644)
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(clientKeyPath, []byte(o.Key), 0644)
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(clientCertPath, []byte(o.Cert), 0644)
+	if err != nil {
+		return err
 	}
 	return nil
 }

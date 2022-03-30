@@ -8,7 +8,6 @@ import (
 )
 
 type OpenVPNConfig struct {
-	OVPN  string
 	lines []string
 	CA    string
 	Cert  string
@@ -17,7 +16,6 @@ type OpenVPNConfig struct {
 
 func NewOpenVPNConfig(lines []string) (OpenVPNConfig, error) {
 	o := OpenVPNConfig{lines: lines}
-	o.OVPN = strings.Join(lines, "")
 	err := o.process()
 	return o, err
 }

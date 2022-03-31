@@ -28,3 +28,7 @@ fmt.Sprintf("CA %s \n Cert %s \n Key %s \n", config.CA, config.Cert, config.Key)
 
 
 
+### Use the CLI
+```
+go run main.go -i test-data/test.ovpn -o out
+```
